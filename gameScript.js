@@ -9,18 +9,20 @@ function Cell() {
       value = player;
     };
   
-    const getValue = () => value;
+    const getValue = () => {
+        return value;
+    };
   
     return {
       addMark,
-      getValue
+      getValue,
     };
   }
 
 function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
     const players = [Player(playerOneName, "X"), Player(playerTwoName, "O")];
-    const activePlayerIdx = 0;
-    const winningPlayerIdx = -1;
+    let activePlayerIdx = 0;
+    let winningPlayerIdx = -1;
 
     const switchActivePlayer = () => {
         activePlayerIdx = (activePlayerIdx + 1) % 2;
@@ -28,14 +30,13 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
     const gameBoard = (function () {
         const BOARD_SIZE = 3;
-        board = [];
+        let board = [];
 
         for (let i = 0; i < BOARD_SIZE; i++) {
-            let row = [];
+            board[i] = [];
             for (let j = 0; j < BOARD_SIZE; j++) {
-                row.push(Cell());
+                board[i].push(Cell());
             }
-            board.push(row);
         }
 
         const addMark = (i, j, mark) => {
@@ -43,23 +44,31 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
             board[i][j].addMark(mark);
         }
         
-        const getBoard = () => {
-            return board;
+        const getBoard = () => { 
+            return board; 
+        };
+
+        const printBoard = () => {
+            const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()));
+            console.log(boardWithCellValues);
         }
 
         return {
             addMark,
             getBoard,
+            printBoard
         };
     })();
 
     const playRound = (i, j) => {
         // add mark
-        gameBoard.addMark(i, j, getActivePlayer.mark);
+        gameBoard.addMark(i, j, getActivePlayer().mark);
 
         // check if win
         // switch player turn
         switchActivePlayer();
+
+        gameBoard.printBoard();
     }
 
     const getActivePlayer = () => {
@@ -75,7 +84,7 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
     return {
         playRound,
         getActivePlayer,
-        getBoard : gameBoard.getBoard(),
+        getBoard : () => gameBoard.getBoard(),
         getWinner,
     };
 }
