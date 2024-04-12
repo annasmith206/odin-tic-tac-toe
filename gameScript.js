@@ -1,29 +1,31 @@
-function Player(name, mark) {
-    return {name, mark};
+class Player {
+    constructor(name, mark){
+        this.name = name;
+        this.mark = mark;
+    }
 }
 
-function Cell() {
-    let value = "";
+class Cell {
+    value;
+
+    constructor() {
+        this.value = "";
+    }
+
+    addMark(player) {
+      this.value = player;
+    }
   
-    const addMark = (player) => {
-      value = player;
-    };
-  
-    const getValue = () => {
+    get value() {
         return value;
-    };
-  
-    return {
-      addMark,
-      getValue,
-    };
+    }
   }
 
 function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
     playerOneName = playerOneName === "" ? "Player One" : playerOneName;
     playerTwoName = playerTwoName === "" ? "Player Two" : playerTwoName;
 
-    const players = [Player(playerOneName, "X"), Player(playerTwoName, "O")];
+    const players = [new Player(playerOneName, "X"), new Player(playerTwoName, "O")];
     let activePlayerIdx = 0;
     let winningPlayerIdx = -1;
     let isGameOver = false;
@@ -35,13 +37,13 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
         for (let i = 0; i < BOARD_SIZE; i++) {
             board[i] = [];
             for (let j = 0; j < BOARD_SIZE; j++) {
-                board[i].push(Cell());
+                board[i].push(new Cell());
             }
         }
 
         const addMark = (i, j, mark) => {
             // no mark added
-            if (board[i][j].getValue() !== "") return false;
+            if (board[i][j].value !== "") return false;
 
             // add mark to board in position
             board[i][j].addMark(mark);
@@ -53,7 +55,7 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
         };
 
         const printBoard = () => {
-            const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()));
+            const boardWithCellValues = board.map((row) => row.map((cell) => cell.value));
             console.log(boardWithCellValues);
         }
 
@@ -61,31 +63,31 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
             // check rows
             for (let i = 0; i < BOARD_SIZE; i++) {
                 let isPerfectRow = true;
-                for (let j=0; j < BOARD_SIZE; j++) isPerfectRow &= (board[i][j].getValue() === mark);
+                for (let j=0; j < BOARD_SIZE; j++) isPerfectRow &= (board[i][j].value === mark);
                 if (isPerfectRow) return true;
             }
     
             // check columns 
             for (let j = 0; j < BOARD_SIZE; j++) {
                 let isPerfectCol = true;
-                for (let i=0; i < BOARD_SIZE; i++) isPerfectCol &= (board[i][j].getValue() === mark);
+                for (let i=0; i < BOARD_SIZE; i++) isPerfectCol &= (board[i][j].value === mark);
                 if (isPerfectCol) return true;
             }
 
             // check diagonals
             let isPerfectDiagonal = true;
-            for (let i = 0; i < BOARD_SIZE; i++) isPerfectDiagonal &= (board[i][i].getValue() === mark);
+            for (let i = 0; i < BOARD_SIZE; i++) isPerfectDiagonal &= (board[i][i].value === mark);
             if (isPerfectDiagonal) return true;
 
             isPerfectDiagonal = true;
-            for (let i = 0; i < BOARD_SIZE; i++) isPerfectDiagonal &= (board[i][BOARD_SIZE-i-1].getValue() === mark);
+            for (let i = 0; i < BOARD_SIZE; i++) isPerfectDiagonal &= (board[i][BOARD_SIZE-i-1].value === mark);
             return isPerfectDiagonal;
         }
 
         const isFull = () => {
             for (let i = 0; i < BOARD_SIZE; i++) {
                 for (let j=0; j < BOARD_SIZE; j++) {
-                    if (board[i][j].getValue() === "")  return false;
+                    if (board[i][j].value === "")  return false;
                 }
             }
             return true;
@@ -201,7 +203,7 @@ const screenController = (function() {
         gameBoard.forEach((row, i) => {
             row.forEach((cell, j) => {
                 cellButton = document.createElement("button");
-                cellButton.textContent = cell.getValue();
+                cellButton.textContent = cell.value;
                 cellButton.dataset.rowID = i;
                 cellButton.dataset.columnID = j;
                 boardDiv.appendChild(cellButton);
