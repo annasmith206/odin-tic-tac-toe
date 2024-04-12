@@ -1,0 +1,14 @@
+.board {
+    width: 600px;
+    height: 600px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.button {
+    width: 100px;
+    height: 100px;
+
+}
