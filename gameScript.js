@@ -21,7 +21,6 @@ class Cell {
     }
 }
 
-
 class GameBoard {
     #BOARD_SIZE = 3;
     #board = [];
@@ -148,79 +147,83 @@ class GameController {
 
 }
 
-    
+class ScreenController {
+    #gameController;
+    #inProgress = false;
+    #gameContainer = document.querySelector(".gameContainer");
+    #startForm = document.querySelector(".startForm");
+    #playerTurnDiv = document.querySelector('.turn');
+    #boardDiv = document.querySelector('.board');
+    #restartButton = document.querySelector('.restartButton');
 
-const screenController = (function() {
-    let gameController
-    let inProgress = false;
-
-    const gameContainer = document.querySelector(".gameContainer");
-    const startForm = document.querySelector(".startForm");
-    const playerTurnDiv = document.querySelector('.turn');
-    const boardDiv = document.querySelector('.board');
-    const restartButton = document.querySelector('.restartButton');
-
-    const getStatusMessage = () => {
-        if (gameController.gameOver) {
-            let winner = gameController.winner;
-            return winner ? `${winner.name} wins!` : "It's a tie!";
-        }
-
-        return `${gameController.activePlayer.name}'s turn`;
+    constructor() {
+        this.#startForm.addEventListener("submit", (e) => {
+            this.#onClickStart(e);
+        });
+        this.#restartButton.addEventListener("click", (e) => {
+            if (this.#inProgress) this.#toggleState(); 
+        });
+        this.#boardDiv.addEventListener("click", (e) => {
+            this.#onClickBoard(e);
+        });
     }
 
-    const toggleState = () => {
-        gameContainer.classList.toggle('hideChildren');
-        startForm.classList.toggle('hideChildren');
-
-        inProgress = !inProgress;
-    }
-
-    startForm.addEventListener("submit", (e) => {
+    #onClickStart(e) {
         e.preventDefault();
 
-        if (!inProgress) {
+        if (!this.#inProgress) {
             const playerNames = Array.from(document.querySelectorAll("form input"));
-            gameController = new GameController(playerNames[0].value, playerNames[1].value);
-            toggleState();
-            renderBoard();
+            this.#gameController = new GameController(playerNames[0].value, playerNames[1].value);
+            this.#toggleState();
+            this.#renderBoard();
         }
-        
-    });
-
-    restartButton.addEventListener("click", (e) => {
-        if (inProgress) {
-            toggleState();
-        }
-    })
-
-    const renderBoard = () => {
-        // clear board
-        boardDiv.textContent = "";
-        
-        const gameBoard = gameController.board;
-        gameBoard.forEach((row, i) => {
-            row.forEach((cell, j) => {
-                cellButton = document.createElement("button");
-                cellButton.textContent = cell.value;
-                cellButton.dataset.rowID = i;
-                cellButton.dataset.columnID = j;
-                boardDiv.appendChild(cellButton);
-            });
-        });
-
-        playerTurnDiv.textContent = getStatusMessage();
     }
 
-    boardDiv.addEventListener("click", (e) => {
-        if (!inProgress) return;
-
+    #onClickBoard(e) {
+        if (!this.#inProgress) return;
+    
         const i = e.target.dataset.rowID;
         const j = e.target.dataset.columnID;
         
         if (!i || !j) return;
 
-        gameController.playRound(i, j);
-        renderBoard();
-    })
-})();
+        this.#gameController.playRound(i, j);
+        this.#renderBoard();
+    }
+
+    #getStatusMessage() {
+        if (this.#gameController.gameOver) {
+            let winner = this.#gameController.winner;
+            return winner ? `${winner.name} wins!` : "It's a tie!";
+        }
+
+        return `${this.#gameController.activePlayer.name}'s turn`;
+    }
+
+    #toggleState() {
+        this.#gameContainer.classList.toggle('hideChildren');
+        this.#startForm.classList.toggle('hideChildren');
+
+        this.#inProgress = !this.#inProgress;
+    }
+
+    #renderBoard() {
+        // clear board
+        this.#boardDiv.textContent = "";
+        
+        const gameBoard = this.#gameController.board;
+        gameBoard.forEach((row, i) => {
+            row.forEach((cell, j) => {
+                const cellButton = document.createElement("button");
+                cellButton.textContent = cell.value;
+                cellButton.dataset.rowID = i;
+                cellButton.dataset.columnID = j;
+                this.#boardDiv.appendChild(cellButton);
+            });
+        });
+
+        this.#playerTurnDiv.textContent = this.#getStatusMessage();
+    }
+}
+
+const screenController = new ScreenController();
