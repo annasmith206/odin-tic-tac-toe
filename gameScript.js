@@ -17,139 +17,133 @@ class Cell {
     }
   
     get value() {
-        return value;
+        return this.value;
     }
-  }
+}
 
-function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
-    playerOneName = playerOneName === "" ? "Player One" : playerOneName;
-    playerTwoName = playerTwoName === "" ? "Player Two" : playerTwoName;
 
-    const players = [new Player(playerOneName, "X"), new Player(playerTwoName, "O")];
-    let activePlayerIdx = 0;
-    let winningPlayerIdx = -1;
-    let isGameOver = false;
+class GameBoard {
+    #BOARD_SIZE = 3;
+    board = [];
 
-    const gameBoard = (function () {
-        const BOARD_SIZE = 3;
-        let board = [];
-
-        for (let i = 0; i < BOARD_SIZE; i++) {
-            board[i] = [];
-            for (let j = 0; j < BOARD_SIZE; j++) {
-                board[i].push(new Cell());
+    constructor() {
+        for (let i = 0; i < this.#BOARD_SIZE; i++) {
+            this.board[i] = [];
+            for (let j = 0; j < this.#BOARD_SIZE; j++) {
+                this.board[i].push(new Cell());
             }
         }
-
-        const addMark = (i, j, mark) => {
-            // no mark added
-            if (board[i][j].value !== "") return false;
-
-            // add mark to board in position
-            board[i][j].addMark(mark);
-            return true;
-        }
-        
-        const getBoard = () => { 
-            return board; 
-        };
-
-        const printBoard = () => {
-            const boardWithCellValues = board.map((row) => row.map((cell) => cell.value));
-            console.log(boardWithCellValues);
-        }
-
-        const hasCompleteLine = (mark) => {
-            // check rows
-            for (let i = 0; i < BOARD_SIZE; i++) {
-                let isPerfectRow = true;
-                for (let j=0; j < BOARD_SIZE; j++) isPerfectRow &= (board[i][j].value === mark);
-                if (isPerfectRow) return true;
-            }
-    
-            // check columns 
-            for (let j = 0; j < BOARD_SIZE; j++) {
-                let isPerfectCol = true;
-                for (let i=0; i < BOARD_SIZE; i++) isPerfectCol &= (board[i][j].value === mark);
-                if (isPerfectCol) return true;
-            }
-
-            // check diagonals
-            let isPerfectDiagonal = true;
-            for (let i = 0; i < BOARD_SIZE; i++) isPerfectDiagonal &= (board[i][i].value === mark);
-            if (isPerfectDiagonal) return true;
-
-            isPerfectDiagonal = true;
-            for (let i = 0; i < BOARD_SIZE; i++) isPerfectDiagonal &= (board[i][BOARD_SIZE-i-1].value === mark);
-            return isPerfectDiagonal;
-        }
-
-        const isFull = () => {
-            for (let i = 0; i < BOARD_SIZE; i++) {
-                for (let j=0; j < BOARD_SIZE; j++) {
-                    if (board[i][j].value === "")  return false;
-                }
-            }
-            return true;
-        }
-
-        return {
-            addMark,
-            getBoard,
-            printBoard,
-            hasCompleteLine,
-            isFull,
-        };
-    })();
-
-    const switchActivePlayer = () => {
-        activePlayerIdx = (activePlayerIdx + 1) % 2;
     }
 
-    const endGame = (playerIdx = -1) => {
-        winningPlayerIdx = playerIdx;
-        isGameOver = true;
+    get board(){ 
+        return this.board; 
     }
 
-    const playRound = (i, j) => {
+    addMark(i, j, mark) {
+        // no mark added
+        if (this.board[i][j].value !== "") return false;
+
+        // add mark to board in position
+        this.board[i][j].addMark(mark);
+        return true;
+    }
+
+    printBoard(){
+        const boardWithCellValues = this.board.map((row) => row.map((cell) => cell.value));
+        console.log(boardWithCellValues);
+    }
+
+    hasCompleteLine(mark){
+        // check rows
+        for (let i = 0; i < this.#BOARD_SIZE; i++) {
+            let isPerfectRow = true;
+            for (let j=0; j < this.#BOARD_SIZE; j++) isPerfectRow &= (this.board[i][j].value === mark);
+            if (isPerfectRow) return true;
+        }
+
+        // check columns 
+        for (let j = 0; j < this.#BOARD_SIZE; j++) {
+            let isPerfectCol = true;
+            for (let i=0; i < this.#BOARD_SIZE; i++) isPerfectCol &= (this.board[i][j].value === mark);
+            if (isPerfectCol) return true;
+        }
+
+        // check diagonals
+        let isPerfectDiagonal = true;
+        for (let i = 0; i < this.#BOARD_SIZE; i++) isPerfectDiagonal &= (this.board[i][i].value === mark);
+        if (isPerfectDiagonal) return true;
+
+        isPerfectDiagonal = true;
+        for (let i = 0; i < this.#BOARD_SIZE; i++) isPerfectDiagonal &= (this.board[i][this.#BOARD_SIZE-i-1].value === mark);
+        return isPerfectDiagonal;
+    }
+
+    isFull(){
+        for (let i = 0; i < this.#BOARD_SIZE; i++) {
+            for (let j=0; j < this.#BOARD_SIZE; j++) {
+                if (this.board[i][j].value === "")  return false;
+            }
+        }
+        return true;
+    }
+}
+
+class GameController {
+    constructor(playerOneName = "Player One", playerTwoName = "Player Two") {
+        this.playerOneName = playerOneName === "" ? "Player One" : playerOneName;
+        this.playerTwoName = playerTwoName === "" ? "Player Two" : playerTwoName;
+
+        this.players = [new Player(this.playerOneName, "X"), new Player(this.playerTwoName, "O")]; 
+        this.activePlayerIdx = 0;
+        this.winningPlayerIdx = -1;
+        this.isGameOver = false;
+        this.gameBoard = new GameBoard();
+    }
+
+    switchActivePlayer() {
+        this.activePlayerIdx = (this.activePlayerIdx + 1) % 2;
+    }
+
+    endGame(playerIdx = -1){
+        this.winningPlayerIdx = playerIdx;
+        this.isGameOver = true;
+    }
+
+    playRound(i, j) {
         // game over
-        if(isGameOver) return;
+        if(this.isGameOver) return;
 
         // add mark
-        markAdded = gameBoard.addMark(i, j, getActivePlayer().mark);
+        let markAdded = this.gameBoard.addMark(i, j, this.getActivePlayer().mark);
         if (!markAdded) return;
 
         // check for win or full board
-        if (gameBoard.hasCompleteLine(getActivePlayer().mark)) {
-            endGame(activePlayerIdx);
-        } else if (gameBoard.isFull()) {
-            endGame();
+        if (this.gameBoard.hasCompleteLine(this.getActivePlayer().mark)) {
+            this.endGame(this.activePlayerIdx);
+        } else if (this.gameBoard.isFull()) {
+            this.endGame();
         } else {
-            switchActivePlayer();
+            this.switchActivePlayer();
         }
     }
 
-    const getActivePlayer = () => {
+    getActivePlayer() {
         // return active player
-        return players[activePlayerIdx];
+        return this.players[this.activePlayerIdx];
     }
 
-    const getWinner = () => {
+    getWinner(){
         // return winner
-        return winningPlayerIdx === -1 ? null : players[winningPlayerIdx];
+        return this.winningPlayerIdx === -1 ? null : this.players[this.winningPlayerIdx];
     }
 
-    gameBoard.printBoard();
-    console.log(`${getActivePlayer().name}'s turn`);
+    getBoard() {
+        return this.gameBoard.board;
+    }
 
-    return {
-        playRound,
-        getActivePlayer,
-        getBoard : () => gameBoard.getBoard(),
-        isGameOver : () => isGameOver,
-        getWinner,
-    };
 }
+
+    
 
 const screenController = (function() {
     let gameController
@@ -162,7 +156,7 @@ const screenController = (function() {
     const restartButton = document.querySelector('.restartButton');
 
     const getStatusMessage = () => {
-        if (gameController.isGameOver()) {
+        if (gameController.isGameOver) {
             let winner = gameController.getWinner();
             return winner ? `${winner.name} wins!` : "It's a tie!";
         }
@@ -182,7 +176,7 @@ const screenController = (function() {
 
         if (!inProgress) {
             const playerNames = Array.from(document.querySelectorAll("form input"));
-            gameController = GameController(playerNames[0].value, playerNames[1].value);
+            gameController = new GameController(playerNames[0].value, playerNames[1].value);
             toggleState();
             renderBoard();
         }
