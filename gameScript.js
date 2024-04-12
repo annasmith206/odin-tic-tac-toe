@@ -20,6 +20,9 @@ function Cell() {
   }
 
 function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
+    playerOneName = playerOneName === "" ? "Player One" : playerOneName;
+    playerTwoName = playerTwoName === "" ? "Player Two" : playerTwoName;
+
     const players = [Player(playerOneName, "X"), Player(playerTwoName, "O")];
     let activePlayerIdx = 0;
     let winningPlayerIdx = -1;
@@ -150,9 +153,10 @@ const screenController = (function() {
     let gameController
     let inProgress = false;
 
+    const gameContainer = document.querySelector(".gameContainer");
+    const startForm = document.querySelector(".startForm");
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board');
-    const startButton = document.querySelector('.startButton');
     const restartButton = document.querySelector('.restartButton');
 
     const getStatusMessage = () => {
@@ -165,20 +169,22 @@ const screenController = (function() {
     }
 
     const toggleState = () => {
-        startButton.classList.toggle('hide');
-        playerTurnDiv.classList.toggle('hide');
-        boardDiv.classList.toggle('hide');
-        restartButton.classList.toggle('hide');
+        gameContainer.classList.toggle('hideChildren');
+        startForm.classList.toggle('hideChildren');
 
         inProgress = !inProgress;
     }
 
-    startButton.addEventListener("click", (e) => {
+    startForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
         if (!inProgress) {
-            gameController = GameController();
+            const playerNames = Array.from(document.querySelectorAll("form input"));
+            gameController = GameController(playerNames[0].value, playerNames[1].value);
             toggleState();
             renderBoard();
         }
+        
     });
 
     restartButton.addEventListener("click", (e) => {
@@ -206,7 +212,7 @@ const screenController = (function() {
     }
 
     boardDiv.addEventListener("click", (e) => {
-        if (! inProgress) return;
+        if (!inProgress) return;
 
         const i = e.target.dataset.rowID;
         const j = e.target.dataset.columnID;
@@ -217,44 +223,3 @@ const screenController = (function() {
         renderBoard();
     })
 })();
-
-// column
-/*
-gameController.playRound(0,0);
-gameController.playRound(2,2);
-gameController.playRound(1,0);
-gameController.playRound(2,2);
-gameController.playRound(2,0);
-*/
-
-// diagonal 1
-/*
-gameController.playRound(0,0);
-gameController.playRound(1,0);
-gameController.playRound(1,1);
-gameController.playRound(1,0);
-gameController.playRound(2,2);
-*/
-
-// diagonal 2
-/*
-gameController.playRound(0,2);
-gameController.playRound(1,0);
-gameController.playRound(1,1);
-gameController.playRound(1,0);
-gameController.playRound(2,0);
-*/
-
-// cat's game
-/*
-gameController.playRound(0,0);
-gameController.playRound(0,1);
-gameController.playRound(0,2);
-gameController.playRound(1,0);
-gameController.playRound(1,2);
-gameController.playRound(1,1);
-gameController.playRound(2,0);
-gameController.playRound(2,2);
-gameController.playRound(2,1);
-*/
-

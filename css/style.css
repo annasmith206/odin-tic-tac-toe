@@ -1,12 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+form {
+    background-color: rgb(255, 229, 85);
+    padding: 30px 30px 30px 30px;
+    margin: 40px auto;
+    align-content: center;
+    width: fit-content;
+    border-radius: 30px;
+    display: grid;
+    gap: 15px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.textField {
+    display: grid;
+    gap: 5px;
+}
+
+input {
+    padding: 8px;
+}
+
+h1 {
+    margin: 0;
+}
+
+.startButton, .restartButton{
+    border: none;
+    padding: 12px 40px;
+    background-color: black;
+    border-radius: 20px;
+    color: white;
+    font-size: 1rem;
+    width: fit-content;
+    justify-self: center;
+}
+
+.gameContainer {
+    background-color: rgb(255, 229, 85);
+    display: grid;
+    justify-content: center;
+    padding: 20px 40px;;
+    gap: 15px;
+    width: fit-content;
+    margin: 40px auto;
+    border-radius: 30px;
+}
+
+.restartButton {
+    width: fit-content;
+    justify-self: center;
+}
+
+.board > button {
+    font-size: 5rem;
+    font-weight: 700;
+    background-color: white;
+    border: none;
+    margin: 6px;
+}
+
 .board {
-    width: 600px;
-    height: 600px;
+    width: 400px;
+    height: 400px;
     margin: auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    background-color: black;
+    padding: 6px;
 }
 
-.hide {
+.hideChildren, .hideChildren * {
     display: none;
 }

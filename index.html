@@ -8,11 +8,22 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <button class="startButton">Start Game</button>
-    <div class="container">
-        <h1 class="turn hide"></div>
-        <div class="board hide"></div>
-        <button class="restartButton hide">Restart</button>
+    <form class="startForm">
+        <h1>Welcome to Tic Tac Toe!</h1>
+        <div class="textField">
+            <label for="playerOne">Player One's Name</label>
+            <input type="text" id="playerOne" name="playerOne"/>
+        </div>
+        <div class="textField">
+            <label for="playerTwo">Player Two's Name</label>
+            <input type="text" id="playerTwo" name="playerTwo"/>
+        </div>
+        <button class="startButton" type="submit">Start Game</button>
+    </form>
+    <div class="hideChildren gameContainer">
+        <h1 class="turn"></h1>
+        <div class="board"></div>
+        <button class="restartButton">Restart</button>
     </div>
     <script src="./gameScript.js"></script>
 </body>
