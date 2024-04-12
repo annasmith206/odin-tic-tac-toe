@@ -25,15 +25,6 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
     let winningPlayerIdx = -1;
     let isGameOver = false;
 
-    const switchActivePlayer = () => {
-        activePlayerIdx = (activePlayerIdx + 1) % 2;
-    }
-
-    const endGame = (playerIdx = -1) => {
-        winningPlayerIdx = playerIdx;
-        isGameOver = true;
-    }
-
     const gameBoard = (function () {
         const BOARD_SIZE = 3;
         let board = [];
@@ -106,6 +97,15 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
         };
     })();
 
+    const switchActivePlayer = () => {
+        activePlayerIdx = (activePlayerIdx + 1) % 2;
+    }
+
+    const endGame = (playerIdx = -1) => {
+        winningPlayerIdx = playerIdx;
+        isGameOver = true;
+    }
+
     const playRound = (i, j) => {
         // game over
         if(isGameOver) return;
@@ -154,7 +154,7 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
         playRound,
         getActivePlayer,
         getBoard : () => gameBoard.getBoard(),
-        getIsGameOver : () => isGameOVer,
+        isGameOver : () => isGameOVer,
         getWinner,
     };
 })();
