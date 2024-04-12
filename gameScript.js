@@ -168,14 +168,26 @@ const screenController = (function() {
         boardDiv.textContent = "";
         
         const gameBoard = gameController.getBoard();
-        gameBoard.forEach((row) => {
-            row.forEach((cell) => {
+        gameBoard.forEach((row, i) => {
+            row.forEach((cell, j) => {
                 cellButton = document.createElement("button");
                 cellButton.textContent = cell.getValue();
+                cellButton.dataset.rowID = i;
+                cellButton.dataset.columnID = j;
                 boardDiv.appendChild(cellButton);
             });
         });
     }
+
+    boardDiv.addEventListener("click", (e) => {
+        const i = e.target.dataset.rowID;
+        const j = e.target.dataset.columnID;
+        
+        if (!i || !j) return;
+
+        gameController.playRound(i, j);
+        renderBoard();
+    })
 
     renderBoard();
 })();
