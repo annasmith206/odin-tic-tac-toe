@@ -23,13 +23,15 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
     const players = [Player(playerOneName, "X"), Player(playerTwoName, "O")];
     let activePlayerIdx = 0;
     let winningPlayerIdx = -1;
+    let isGameOver = false;
 
     const switchActivePlayer = () => {
         activePlayerIdx = (activePlayerIdx + 1) % 2;
     }
 
-    const setWinningPlayer = () => {
-        winningPlayerIdx = activePlayerIdx;
+    const endGame = (playerIdx = -1) => {
+        winningPlayerIdx = playerIdx;
+        isGameOver = true;
     }
 
     const gameBoard = (function () {
@@ -44,8 +46,12 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
         }
 
         const addMark = (i, j, mark) => {
+            // no mark added
+            if (board[i][j].getValue() !== "") return false;
+
             // add mark to board in position
             board[i][j].addMark(mark);
+            return true;
         }
         
         const getBoard = () => { 
@@ -82,25 +88,50 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
             return isPerfectDiagonal;
         }
 
+        const isFull = () => {
+            for (let i = 0; i < BOARD_SIZE; i++) {
+                for (let j=0; j < BOARD_SIZE; j++) {
+                    if (board[i][j].getValue() === "")  return false;
+                }
+            }
+            return true;
+        }
+
         return {
             addMark,
             getBoard,
             printBoard,
             hasCompleteLine,
+            isFull,
         };
     })();
 
     const playRound = (i, j) => {
+        // game over
+        if(isGameOver) return;
+
         // add mark
-        gameBoard.addMark(i, j, getActivePlayer().mark);
+        markAdded = gameBoard.addMark(i, j, getActivePlayer().mark);
+        if (!markAdded) return;
 
-        // check if win
-        gameBoard.hasCompleteLine(getActivePlayer().mark) ? setWinningPlayer() : switchActivePlayer();
+        // check for win or full board
+        if (gameBoard.hasCompleteLine(getActivePlayer().mark)) {
+            endGame(activePlayerIdx);
+        } else if (gameBoard.isFull()) {
+            endGame();
+        } else {
+            switchActivePlayer();
+        }
 
+        // log results
         gameBoard.printBoard();
-        
-        if (isGameOver()) {
-            console.log(`${getWinner().name} wins!`);
+        if (isGameOver) {
+            let winner = getWinner();
+            if (winner) {
+                console.log(`${getWinner().name} wins!`);
+            } else {
+                console.log("It's a tie!");
+            }
         } else {
             console.log(`${getActivePlayer().name}'s turn`);
         }
@@ -116,10 +147,6 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
         return winningPlayerIdx === -1 ? null : players[winningPlayerIdx];
     }
 
-    const isGameOver = () => {
-        return winningPlayerIdx !== -1;
-    }
-
     gameBoard.printBoard();
     console.log(`${getActivePlayer().name}'s turn`);
 
@@ -127,7 +154,7 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
         playRound,
         getActivePlayer,
         getBoard : () => gameBoard.getBoard(),
-        isGameOver,
+        getIsGameOver : () => isGameOVer,
         getWinner,
     };
 })();
@@ -159,4 +186,16 @@ gameController.playRound(1,0);
 gameController.playRound(2,0);
 */
 
+// cat's game
+/*
+gameController.playRound(0,0);
+gameController.playRound(0,1);
+gameController.playRound(0,2);
+gameController.playRound(1,0);
+gameController.playRound(1,2);
+gameController.playRound(1,1);
+gameController.playRound(2,0);
+gameController.playRound(2,2);
+gameController.playRound(2,1);
+*/
 
