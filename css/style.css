@@ -5,14 +5,17 @@
 }
 
 form {
-    background-color: rgb(255, 229, 85);
     padding: 30px 30px 30px 30px;
     margin: 40px auto;
     align-content: center;
     width: fit-content;
-    border-radius: 30px;
     display: grid;
     gap: 15px;
+}
+
+.card {
+    background-color: rgb(255, 229, 85);
+    border-radius: 30px;
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
@@ -41,14 +44,12 @@ h1 {
 }
 
 .gameContainer {
-    background-color: rgb(255, 229, 85);
     display: grid;
     justify-content: center;
     padding: 20px 40px;;
     gap: 15px;
     width: fit-content;
     margin: 40px auto;
-    border-radius: 30px;
 }
 
 .restartButton {
